@@ -1,0 +1,62 @@
+﻿@using System.Data.SqlClient;
+@using System.Configuration;
+
+@{
+    Page.Title = "Renton Technical College - Tutoring Tracker";
+    Layout = "~/Shared/_Layout.cshtml";
+
+    @LoginHelper.NoSessionRedirect(Session["id"])
+
+    string ConStr = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+
+
+
+    List<Appointment> inactiveList = new List<Appointment>();
+
+    // Button That filters dates for previous appointments
+    if (Request.Form["filterSubmit"] != null)
+    {
+        DateTime start;
+        DateTime end;
+
+        if (DateTime.TryParse(Request.Form["dateStart"].ToString(), out start) &&
+            DateTime.TryParse(Request.Form["dateEnd"].ToString(), out end)
+            )
+        {
+            inactiveList = new AppointmentManager().DisplayAppointmentsByDate(ConStr, Session["id"].ToString(), start, end.AddDays(1), AppointmentManager.ShowAppointments.INACTIVE);
+        }
+        else
+        {
+            inactiveList = new AppointmentManager().DisplayAppointments(ConStr, Session["id"].ToString(), AppointmentManager.ShowAppointments.INACTIVE);
+
+            <script>alert("Enter valid dates");</script>
+        }
+
+    }
+    else
+    {
+        inactiveList = new AppointmentManager().DisplayAppointments(ConStr, Session["id"].ToString(), AppointmentManager.ShowAppointments.INACTIVE);
+    }
+
+}
+
+
+@RenderPage("~/Shared/_nav.cshtml");
+
+
+<div class="row">
+
+
+    <div id="activeTutoring" class="col-md-8 col-md-offset-2">
+        <form method="post">
+            <label>Start Date: </label>
+            <input type="date" name="dateStart" value=@Request.Form["dateStart"] />
+            <label>End Date: </label>
+            <input type="date" name="dateEnd" value=@Request.Form["dateEnd"] />
+            <input type="submit" name="filterSubmit" value="Filter" />
+        </form>
+        @AppointmentHelper.DisplayInactive(inactiveList)
+
+
+    </div>
+</div>

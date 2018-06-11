@@ -1,0 +1,89 @@
+﻿@using System.Data.SqlClient;
+@using System.Configuration;
+
+
+
+@{
+    Page.Title = "Renton Technical College - Tutoring Tracker";
+    Layout = "~/Shared/_Layout.cshtml";
+
+    string ConStr = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+
+
+    @LoginHelper.NoSessionRedirect(Session["id"])
+
+    string tutorId = Session["id"].ToString();
+
+    // Populates a list of all active appointments for tutor
+    List<Appointment> activeList = new AppointmentManager().DisplayAppointments(ConStr, tutorId, AppointmentManager.ShowAppointments.ACTIVE);
+
+    // On click of Add Appointment Button
+    if(Request.Form["addAppointment"] != null)
+    {
+        string studentId = Request.Form["studentId"];
+        string studentName = Request.Form["studentName"];
+        string subject = Request.Form["subject"];
+        string location = Request.Form["location"];
+
+        if(!studentId.Equals("") && !studentName.Equals("") && !subject.Equals("") && !location.Equals(""))
+        {
+            new AppointmentManager().StartAppointment(ConStr, tutorId, studentId, studentName, subject, location);
+
+            Response.Redirect("success.cshtml");
+
+        }
+        else
+        {
+            <script>alert("Fill in all fields");</script>
+        }
+
+    }
+
+    // End appointment
+    if(Request.Form["end"] != null)
+    {
+        int id = Convert.ToInt16(Request.Form["end"]);
+        new AppointmentManager().EndAppointment(ConStr,id, tutorId);
+
+        Response.Redirect("success.cshtml");
+
+    }
+
+}
+
+@RenderPage("~/Shared/_nav.cshtml")
+
+<div class="row">
+
+
+    <form method="post" class="col-md-8 col-md-offset-2">
+        <p>Add apointment - @tutorId</p>
+
+        <label>StudentId <input type="text" name="studentId" id="tutName" /></label>
+
+        <label>StudentName <input type="text" name="studentName" id="tutId" /></label>
+
+        <label>Subject <input type="text" name="subject" id="tutSub" /></label>
+
+        <label>Location <input type="text" name="location" id="tutSub" /></label>
+
+
+        <input type="submit" name="addAppointment" value="Add" />
+    </form>
+
+</div>
+
+<div class="row">
+
+
+    <div id="activeTutoring" class="col-md-8 col-md-offset-2">
+
+        @AppointmentHelper.DisplayActive(activeList)
+
+
+    </div>
+</div>
+
+
+
+<script src="script/appointmentScript.js"></script>

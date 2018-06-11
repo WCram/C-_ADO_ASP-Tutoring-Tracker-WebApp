@@ -1,0 +1,84 @@
+﻿@using System.Data.SqlClient;
+@using System.Configuration;
+
+
+@{
+    Page.Title = "Renton Technical College - Tutoring Tracker";
+    Layout = "~/Shared/_Layout.cshtml";
+
+    string ConStr = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+
+
+    List<Security> secList = new SecurityManager().SecurityList(ConStr);
+    List<Employee> empList = new EmployeeManager().DisplayEmployees(ConStr);
+
+    @LoginHelper.NoSessionRedirect(Session["id"])
+
+    // Add employee button
+    if (Request.Form["addEmployee"] != null)
+    {
+        string id = Request.Form["id"];
+        string first = Request.Form["firstName"];
+        string last = Request.Form["lastName"];
+        string pass = Request.Form["password"];
+        int secId = Convert.ToInt16(Request.Form["secId"]);
+
+        if (!id.Equals("") && !first.Equals("") && !last.Equals("") && !pass.Equals(""))
+        {
+
+            new EmployeeManager().AddEmployee(ConStr, id, first, last, pass, secId);
+
+            <script>alert("Employee Added");</script>
+            Response.Redirect("Admin.cshtml");
+
+        } // EndIf
+
+
+    } // End if
+
+    // Sends user to page to display all apointments related to specific user
+    if (Request.Form["displayAll"] != null)
+    {
+
+        // Gets the tutorId related to the row where the button was clicked
+        Session["dAllTutorId"] = Request.Form["displayTutorId"];
+
+        Response.Redirect("AdminAllAppointments.cshtml");
+
+    }
+
+}
+            <div class="row col-md-8 col-md-offset-2 ">
+                <form method="post">
+
+                    <table>
+                        <tr>
+                            <td>Id</td>
+                            <td><input type="text" name="id" /></td>
+                        </tr>
+                        <tr>
+                            <td>First Name</td>
+                            <td><input type="text" name="firstName" /></td>
+                        </tr>
+                        <tr>
+                            <td>Last Name</td>
+                            <td><input type="text" name="lastName" /></td>
+                        </tr>
+                        <tr>
+                            <td>Password</td>
+                            <td><input type="text" name="password" /></td>
+                        </tr>
+                        <tr>
+                            <td>Security Level</td>
+                            @AdminHelper.PopulateSecurityDropdown(secList)
+                        </tr>
+                    </table>
+
+                    <input type="submit" name="addEmployee" value="Add Employee" />
+                </form>
+            </div>
+
+
+<div id="activeTutoring" class="col-md-8 col-md-offset-2">
+    @AdminHelper.DisplayEmployees(empList)
+</div>

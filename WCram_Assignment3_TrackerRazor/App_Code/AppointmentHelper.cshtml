@@ -1,0 +1,151 @@
+﻿@*Display Active Tutoring Appointments and End appointment button*@
+
+@helper DisplayActive(List<Appointment> activeList)
+    {
+        <table id="tutoringTable">
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Subject</th>
+                <th>Location</th>
+                <th>Start</th>
+                <th>Finish</th>
+            </tr>
+
+            @{
+                foreach (Appointment app in activeList)
+                {
+                    <tr>
+                        <td>@app.StudentId</td>
+                        <td>@app.StudentName</td>
+                        <td>@app.Subject</td>
+                        <td>@app.Location</td>
+                        <td>@app.Start</td>
+                        <td>
+                            <form method="post">
+                                <input type="submit" name="end" value="@app.Id" />
+                            </form>
+                        </td>
+
+
+                    </tr>
+                }
+
+            }
+
+
+        </table>
+}
+
+@*Display Inactive Tutoring Appointments*@
+
+@helper DisplayInactive(List<Appointment> inactiveList)
+    {
+        <table id="tutoringTable">
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Subject</th>
+                <th>Location</th>
+                <th>Start</th>
+                <th>Finish</th>
+            </tr>
+
+            @{
+                foreach (Appointment app in inactiveList)
+                {
+                    <tr>
+                        <td>@app.StudentId</td>
+                        <td>@app.StudentName</td>
+                        <td>@app.Subject</td>
+                        <td>@app.Location</td>
+                        <td>@app.Start</td>
+                        <td>@app.Finish</td>
+
+
+                    </tr>
+                }
+
+            }
+
+
+        </table>
+}
+
+@*Display All Tutoring Appointments and Delete appointment button*@
+
+@helper DisplayAllAdmin(List<Appointment> allList)
+    {
+        <table id="tutoringTable">
+            <tr>
+                <th>Student Id</th>
+                <th>Name</th>
+                <th>Subject</th>
+                <th>Location</th>
+                <th>Start</th>
+                <th>Finish</th>
+                <th>Delete</th>
+            </tr>
+
+            @{
+                foreach (Appointment app in allList)
+                {
+                    <tr>
+
+                        <td>@app.StudentId</td>
+                        <td>@app.StudentName</td>
+                        <td>@app.Subject</td>
+                        <td>@app.Location</td>
+                        <td>@app.Start</td>
+                        <td>@app.Finish</td>
+                        <td>
+                            <form method="post">
+                                <input type="hidden" name="hiddenId" value="@app.Id" />
+                                <input type="hidden" name="hiddenTutorId" value="@app.TutorId" />
+                                <input type="submit" name="deleteRecord" value="Delete" />
+                            </form>
+                        </td>
+                    </tr>
+                }
+
+            }
+
+
+        </table>
+}
+
+@*Display All Appointments*@
+
+
+@helper DisplayAll(List<Appointment> allList)
+    {
+        <table id="tutoringTable">
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Subject</th>
+                <th>Location</th>
+                <th>Start</th>
+                <th>Finish</th>
+            </tr>
+
+            @{
+                foreach (Appointment app in allList)
+                {
+                    <tr>
+                        <td>@app.StudentId</td>
+                        <td>@app.StudentName</td>
+                        <td>@app.Subject</td>
+                        <td>@app.Location</td>
+                        <td>@app.Start</td>
+                        <td>@app.Finish</td>
+                    </tr>
+                }
+
+            }
+
+
+        </table>
+}
+
+

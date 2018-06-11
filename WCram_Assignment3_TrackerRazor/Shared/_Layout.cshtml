@@ -1,0 +1,30 @@
+﻿
+@{ 
+    // On page load checks for cookie "userId"
+    // If not found it creates one with a blank value
+    if (Request.Cookies["userId"] == null)
+    {
+        Response.Cookies["userId"].Value = "";
+        Response.Cookies["userId"].Expires = DateTime.Now.AddDays(7);
+    }
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@Page.Title</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <link href="~/Style/css.css" rel="stylesheet" />
+</head>
+<body>
+    @RenderPage("~/Shared/_header.cshtml")
+    <div class="container-fluid">
+        @RenderBody()
+        </div>
+</body>
+</html>

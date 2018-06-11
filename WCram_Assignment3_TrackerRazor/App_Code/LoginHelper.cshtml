@@ -1,0 +1,11 @@
+﻿@* Checks is Session["id"] is null. If so redirects the user to the login page *@
+
+@helper NoSessionRedirect(Object obj)
+    {
+
+if (obj == null)
+{
+    Response.Redirect("index.cshtml");
+
+}
+}

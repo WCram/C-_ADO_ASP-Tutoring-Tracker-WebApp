@@ -1,0 +1,73 @@
+﻿@using System.Data.SqlClient;
+@using System.Configuration;
+
+
+@{
+    Page.Title = "Renton Technical College - Tutoring Tracker";
+    Layout = "~/Shared/_Layout.cshtml";
+
+    string ConStr = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+
+    @LoginHelper.NoSessionRedirect(Session["id"])
+
+    // This id is related to the button clicked on the previous page, not the current user
+    string tutorId = Session["dAllTutorId"].ToString();
+
+    List<Appointment> allList  = new List<Appointment>();
+
+    // Deletes the appointment depending on which row the button was clicked
+    if (Request.Form["deleteRecord"] != null)
+    {
+        int hiddenId = Convert.ToInt16(Request.Form["hiddenId"]);
+        string hiddenTutId = Request.Form["hiddenTutorId"];
+
+        new AppointmentManager().DeleteAppointment(ConStr, hiddenId, hiddenTutId);
+
+        Response.Redirect("AdminAllAppointments.cshtml");
+    }
+
+    // Filters results based on dates selected
+
+    if (Request.Form["filterSubmit"] != null)
+    {
+        DateTime start;
+        DateTime end;
+
+        if (DateTime.TryParse(Request.Form["dateStart"].ToString(), out start) &&
+            DateTime.TryParse(Request.Form["dateEnd"].ToString(), out end)
+            )
+        {
+            allList = new AppointmentManager().DisplayAppointmentsByDate(ConStr, Session["id"].ToString(), start, end.AddDays(1));
+        }
+        else
+        {
+            allList = new AppointmentManager().DisplayAppointments(ConStr, tutorId, AppointmentManager.ShowAppointments.ALL);
+
+            <script>alert("Enter valid dates");</script>
+        }
+
+    }
+    else
+    {
+        allList = new AppointmentManager().DisplayAppointments(ConStr, tutorId, AppointmentManager.ShowAppointments.ALL);
+    }
+
+}
+
+<div class="row">
+
+
+    <div id="activeTutoring" class="col-md-8 col-md-offset-2">
+        <form method="post">
+            <label>Start Date: </label>
+            <input type="date" name="dateStart" value=@Request.Form["dateStart"] />
+            <label>End Date: </label>
+            <input type="date" name="dateEnd" value=@Request.Form["dateEnd"] />
+            <input type="submit" name="filterSubmit" value="Filter" />
+        </form>
+        <p>@tutorId</p>
+        @AppointmentHelper.DisplayAllAdmin(allList)
+
+
+    </div>
+</div>

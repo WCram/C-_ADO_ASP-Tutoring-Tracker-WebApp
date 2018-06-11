@@ -1,0 +1,95 @@
+﻿@*
+    William Cram
+    CSI 291 - Phase 4
+    03/20/2018
+    Tutoring Tracking App
+
+*@
+
+@using System.Data.SqlClient;
+@using System.Configuration;
+
+@{
+    Page.Title = "Renton Technical College - Tutoring Tracker";
+    Layout = "~/Shared/_Layout.cshtml";
+
+    string ConStr = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+
+    string userId = "";
+
+    // Tutor Login Button
+    if (Request.Form["tutorLogin"] != null)
+    {
+        string id = Request.Form["studentId"];
+        string password = Request.Form["password"];
+
+        // Checks if employee exists
+        if (new EmployeeManager().TutorLogin(ConStr, id, password))
+        {
+            // Sets session id to users id
+            Session["id"] = id;
+
+            // Sets cookie to id for ease of use on loading page next time
+            Response.Cookies["userId"].Value = id;
+            Response.Cookies["userId"].Expires = DateTime.Now.AddDays(7);
+
+            // Sends user to next page
+            Response.Redirect("success.cshtml");
+        }
+        else
+        {
+            <script>alert("Enter Valid Tutor Credentials");</script>
+        }
+    }
+
+    // Checks to see if employee also has admin privilages
+    if (Request.Form["adminLogin"] != null)
+    {
+        string id = Request.Form["studentId"];
+        string password = Request.Form["password"];
+
+        if (new EmployeeManager().AdminLogin(ConStr, id, password))
+        {
+            Session["id"] = id;
+
+            Response.Cookies["userId"].Value = id;
+            Response.Cookies["userId"].Expires = DateTime.Now.AddDays(7);
+
+            Response.Redirect("admin.cshtml");
+        }
+        else
+        {
+            <script>alert("Enter Valid Admin Credentials");</script>
+        }
+
+
+    }
+
+    // Checks if there is a cookie value for user id, auto populates if there is
+    if (Request.Cookies["userId"] != null)
+    {
+        userId = Request.Cookies["userId"].Value;
+
+    }
+}
+
+<div class="row">
+    <div class="col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4" id="login">
+
+
+        <form method="post" runat="server" id="form1">
+            <label>Student Id</label><br />
+            <input type="text" name="studentId" id="studentId" value="@userId" /><span class="error" id="idError"></span><br /><br />
+            <label>Password</label><br />
+            <input type="password" name="password" id="password" /><span class="error" id="passwordError"></span><br /><br />
+            <input type="submit" name="tutorLogin" value="Login" onclick="return formValidate()" /><br /><br />
+            <input type="submit" name="adminLogin" value="Admin" onclick="return formValidate()" />
+
+        </form>
+
+        <br />
+
+
+    </div>
+</div>
+<script src="script/loginScript.js"></script>

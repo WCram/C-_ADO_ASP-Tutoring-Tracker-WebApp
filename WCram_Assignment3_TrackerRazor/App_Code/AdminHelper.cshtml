@@ -1,0 +1,56 @@
+﻿@*Populates the drop down with security levels*@
+
+@helper PopulateSecurityDropdown(List<Security> secList)
+    {
+        <td>
+            <select name="secId">
+
+                @{
+                    foreach (Security item in secList)
+                    {
+                        <option value="@item.Id">
+                            @item.Title
+                        </option>
+                    }
+                }
+
+            </select>
+
+        </td>
+}
+
+@*Displays all employees and creates a button to access all employees appointments*@
+
+@helper DisplayEmployees(List<Employee> empList)
+    {
+        <table id="tutoringTable">
+            <tr>
+                <th>ID</th>
+                <th>First</th>
+                <th>Last</th>
+                <th>Pass</th>
+                <th>Security Level</th>
+                <th>Display Appointments</th>
+            </tr>
+            @{
+                foreach (Employee emp in empList)
+                {
+                    <tr>
+                        <td>@emp.TutorID</td>
+                        <td>@emp.FirstName</td>
+                        <td>@emp.LastName</td>
+                        <td>@emp.Password</td>
+                        <td>@emp.SecurityId</td>
+                        <td>
+                            <form method="post">
+                                <input type="hidden" name="displayTutorId" value="@emp.TutorID" />
+                                <input type="submit" name="displayAll" value="Display All" />
+                            </form>
+                        </td>
+                    </tr>
+                }
+
+            }
+
+        </table>
+}
